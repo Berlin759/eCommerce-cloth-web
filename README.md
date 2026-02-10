@@ -1,2 +1,3 @@
 # eCommerce-cloth-web
-This repository create for ECommerce Cloth Web code update.
+
+A complete, production-ready e-commerce solution built with modern technologies including React.js, Node.js, Express, MongoDB, Redux Toolkit, Tailwind CSS, and Razorpay payment integration.
