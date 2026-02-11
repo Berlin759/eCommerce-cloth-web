@@ -8,6 +8,7 @@ import userModel from "../models/userModel.js";
 import OTPModel from "../models/otpModel.js";
 import settingModel from "../models/settingModel.js";
 import ratingModel from "../models/ratingModel.js";
+import { sendOrderToOwner } from "./whatsAppOrderController.js";
 
 // Create a new order
 const createOrder = async (req, res) => {
@@ -377,93 +378,43 @@ const updateCashOnDeliveryOrderStatus = async (req, res) => {
             return res.status(400).json({ success: false, message: "Order not found" });
         };
 
-        // Create shipment
+        // Send Order On Owner WhatsApp Number
         let payload = {
-            totalAmount: order.amount || 0,
+            items: order.items,
+            orderId: order.orderId,
             customerName: order.address.firstName + " " + order.address.lastName,
+            phone: order.address.phone,
+            firstName: order.address.firstName,
             lastName: order.address.lastName,
-            email: order.address.email,
-            address: order.address.street,
-            pincode: order.address.zipcode,
+            street: order.address.street,
             city: order.address.city,
+            zipcode: order.address.zipcode,
             state: order.address.state,
             country: order.address.country,
-            phone: order.address.phone,
-            orderId: order.orderId,
             paymentMethod: "cod",
-            items: order.items,
+            paymentStatus: "pending",
+            totalAmount: order.amount || 0,
+            email: order.address.email,
         };
 
-        const shipmentData = await createShipment(payload);
-        console.log("CashOnDelivery shipmentData----->", shipmentData);
+        const whatsAppData = await sendOrderToOwner(payload);
+        console.log("CashOnDelivery whatsAppData----->", whatsAppData);
 
-        if (!shipmentData.success) {
-            console.log("Delhivery shipment failed:", shipmentData.message);
+        if (!whatsAppData.success) {
+            console.log("CashOnDelivery whatsApp send failed:", whatsAppData.message);
 
-            order.shipping = {
-                courier: "Shiprocket",
-                shipmentId: "",
-                awb: "",
-                status: "shipment_failed",
-            };
-
-            await order.save();
-
-            return res.status(400).json({ success: false, message: "Your Order shipment failed, please try again later." });
-        };
-
-        const shipment = shipmentData.data;
-        console.log("CashOnDelivery shipment----->", shipment);
-
-        const createAWB = await generateAWB(shipment.shipment_id);
-        console.log("CashOnDelivery createAWB----->", createAWB);
-        if (!createAWB.success) {
-            console.log("Delhivery Create AWB failed:", createAWB.message);
-
-            order.shipping = {
-                courier: "Shiprocket",
-                shipmentId: "",
-                awb: "",
-                status: "awb_failed",
-            };
-
-            await order.save();
-
-            return res.status(400).json({ success: false, message: "Your Order shipment failed, please try again later." });
-        };
-
-        const pickupRequest = await requestPickup(shipment.shipment_id);
-        console.log("CashOnDelivery pickupRequest----->", pickupRequest);
-        if (!pickupRequest.success) {
-            console.log("Delhivery shipment Request failed:", pickupRequest.message);
-
-            order.shipping = {
-                courier: "Shiprocket",
-                shipmentId: "",
-                awb: "",
-                status: "pickup_request_failed",
-            };
-
-            await order.save();
-
-            return res.status(400).json({ success: false, message: "Your Order shipment request failed, please try again later." });
+            return res.status(400).json({ success: false, message: "Your Order failed, please try again later." });
         };
 
         order.status = "confirmed";
         order.paymentStatus = "pending";
         order.paymentMethod = "cod";
-        order.shipping = {
-            courier: "Shiprocket",
-            shipmentId: shipment.shipment_id,
-            awb: createAWB.data.awb_code,
-            status: "Pickup Requested",
-        };
 
         await order.save();
 
-        return res.status(200).json({ success: true, message: "Your Order has been Confirmed" });
+        return res.status(200).json({ success: true, message: "Order confirmed. Shop owner notified on WhatsApp." });
     } catch (error) {
-        console.error("update Cash On Delivery Order Status Error-------->", error);
+        console.error("update COD Order Status Error-------->", error);
         return res.status(400).json({ success: false, message: "Something went Wrong, please try again later." });
     };
 };

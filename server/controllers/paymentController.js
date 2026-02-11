@@ -5,6 +5,7 @@ import { razorpayInstance } from "../config/razorpay.js";
 import { createShipment, generateAWB, requestPickup } from "./shipmentController.js";
 import orderModel from "../models/orderModel.js";
 import userModel from "../models/userModel.js";
+import { sendOrderToOwner } from "./whatsAppOrderController.js";
 
 const { ObjectId } = mongoose.Types;
 
@@ -455,88 +456,34 @@ export const handleRazorpayWebhook = async (req, res) => {
             order.paymentMethod = "online";
             await order.save();
 
-            // Create shipment
+            // Send Order On Owner WhatsApp Number
             let payload = {
-                totalAmount: order.amount || 0,
+                items: order.items,
+                orderId: order.orderId,
                 customerName: order.address.firstName + " " + order.address.lastName,
+                phone: order.address.phone,
+                firstName: order.address.firstName,
                 lastName: order.address.lastName,
-                email: order.address.email,
-                address: order.address.street,
-                pincode: order.address.zipcode,
+                street: order.address.street,
                 city: order.address.city,
+                zipcode: order.address.zipcode,
                 state: order.address.state,
                 country: order.address.country,
-                phone: order.address.phone,
-                orderId: order.orderId,
-                order_date: order.date,
                 paymentMethod: order.paymentMethod || "online",
-                items: order.items,
+                paymentStatus: order.paymentStatus || "paid",
+                totalAmount: order.amount || 0,
+                email: order.address.email,
+                order_date: order.date,
             };
 
-            const shipmentData = await createShipment(payload);
-            console.log("Webhook shipmentData----->", shipmentData);
+            const whatsAppData = await sendOrderToOwner(payload);
+            console.log("Webhook whatsAppData----->", whatsAppData);
 
-            if (!shipmentData.success) {
-                console.log("Delhivery shipment data failed:", shipmentData.message);
+            if (!whatsAppData.success) {
+                console.log("Webhook whatsApp data send failed:", whatsAppData.message);
 
-                order.shipping = {
-                    courier: "Shiprocket",
-                    shipmentId: "",
-                    awb: "",
-                    status: "shipment_failed",
-                };
-
-                await order.save();
-
-                res.sendStatus(200);
+                return res.sendStatus(200);
             };
-
-            const shipment = shipmentData.data;
-            console.log("Razorpay Webhook shipment----->", shipment);
-
-            const createAWB = await generateAWB(shipment.shipment_id);
-            console.log("Razorpay Webhook createAWB----->", createAWB);
-            if (!createAWB.success) {
-                console.log("Razorpay Webhook Create AWB failed:", createAWB.message);
-
-                order.shipping = {
-                    courier: "Shiprocket",
-                    shipmentId: "",
-                    awb: "",
-                    status: "awb_failed",
-                };
-
-                await order.save();
-
-                return res.status(400).json({ success: false, message: "Your Order shipment failed, please try again later." });
-            };
-
-            // Request pickup
-            const pickupRequest = await requestPickup(shipment.shipment_id);
-            console.log("Razorpay Webhook pickupRequest----->", pickupRequest);
-            if (!pickupRequest.success) {
-                console.log("Razorpay Webhook shipment Request failed:", pickupRequest.message);
-
-                order.shipping = {
-                    courier: "Shiprocket",
-                    shipmentId: "",
-                    awb: "",
-                    status: "pickup_request_failed",
-                };
-
-                await order.save();
-
-                return res.status(400).json({ success: false, message: "Your Order shipment request failed, please try again later." });
-            };
-
-            order.shipping = {
-                courier: "Shiprocket",
-                shipmentId: shipment.shipment_id,
-                awb: createAWB.data.awb_code,
-                status: "Pickup Requested",
-            };
-
-            await order.save();
         } else if (eventType.event === "order.failed") {
             await orderModel.findOneAndUpdate(
                 { razorpayOrderId: eventType.payload.order.entity.id },
@@ -565,7 +512,7 @@ export const handleRazorpayWebhook = async (req, res) => {
         //     );
         // };
 
-        res.sendStatus(200);
+        return res.sendStatus(200);
     } catch (error) {
         console.error("webhook error------->", error);
         return res.status(500).json({ success: false, message: error.message });
