@@ -62,11 +62,11 @@ const PriceContainer = ({ item, className }) => {
                 <>
                     <PriceFormat
                         amount={item?.mrp}
-                        className="text-sm text-gray-400 line-through"
+                        className={className ? twMerge("text-gray-400 line-through", className) : "text-sm text-gray-400 line-through"}
                     />
                     <PriceFormat
                         amount={item?.price}
-                        className="text-sm font-medium text-black"
+                        className={className ? twMerge("text-black", className) : "text-sm font-medium text-black"}
                     />
                 </>
             ) : (

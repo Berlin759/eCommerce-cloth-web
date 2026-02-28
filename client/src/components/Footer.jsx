@@ -5,6 +5,30 @@ import Container from "./Container";
 import { Button } from "./ui/button";
 import { paymentCard } from "../assets/images";
 import SocialLinks from "./SocialLinks";
+import { Link } from "react-router-dom";
+import { HiArrowRight } from "react-icons/hi2";
+
+const footerLinks = {
+    quickLinks: [
+        { name: "About Us", href: "/about" },
+        { name: "Shop", href: "/shop" },
+        { name: "Contact", href: "/contact" },
+        { name: "Blog", href: "/blog" },
+        { name: "FAQ", href: "/faq" },
+    ],
+    categories: [
+        { name: "Smartphones", href: "/shop?category=smartphones" },
+        { name: "Electronics", href: "/shop?category=electronics" },
+        { name: "Home & Living", href: "/shop?category=home" },
+        { name: "Accessories", href: "/shop?category=accessories" },
+    ],
+    legal: [
+        { name: "Privacy Policy", href: "#" },
+        { name: "Terms of Service", href: "#" },
+        { name: "Refund Policy", href: "#" },
+        { name: "Shipping Policy", href: "#" },
+    ],
+};
 
 const Footer = () => {
     const categoriesList = useSelector((state) => state.orebiReducer.categoriesList);
@@ -26,116 +50,107 @@ const Footer = () => {
         } else {
             setSubscription(true);
             setErrMsg("");
-            setEmailInfo("");
+            setTimeout(() => setEmailInfo(""), 3000);
         }
     };
 
     return (
-        <footer className="bg-white border-t border-gray-100">
+        <footer className="bg-gray-900 text-white">
             <Container className="py-16">
-                {/* Main Footer Content */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
-                    {/* Brand Section */}
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-12"
+                >
                     <div className="lg:col-span-1">
-                        <h3 className="text-2xl font-bold text-gray-900 mb-6">ECommerce</h3>
-                        <p className="text-gray-600 mb-6 leading-relaxed">
-                            Discover premium quality products with exceptional service. Your
-                            trusted shopping destination for modern lifestyle essentials.
+                        <motion.div
+                            whileHover={{ scale: 1.02 }}
+                            className="inline-block mb-6"
+                        >
+                            <Link to="/" className="text-2xl font-bold">
+                                ECommerce
+                            </Link>
+                        </motion.div>
+                        <p className="text-gray-400 mb-6 leading-relaxed">
+                            Your trusted destination for premium products. We deliver quality, style, and exceptional service to millions of customers worldwide.
                         </p>
                         <SocialLinks
-                            className="text-gray-400 hover:text-gray-900"
-                            iconStyle="w-5 h-5 transition-colors duration-200"
+                            className="text-gray-400"
+                            iconStyle="w-5 h-5 hover:text-white transition-colors duration-200"
                         />
                     </div>
 
-                    {/* Quick Links */}
                     <div>
-                        <h4 className="text-lg font-semibold text-gray-900 mb-6">
-                            Quick Links
-                        </h4>
+                        <h4 className="text-lg font-semibold mb-6">Quick Links</h4>
                         <ul className="space-y-3">
-                            <li>
-                                <a
-                                    href="/about"
-                                    className="text-gray-600 hover:text-gray-900 transition-colors duration-200 text-sm"
+                            {footerLinks.quickLinks.map((link, index) => (
+                                <motion.li
+                                    key={index}
+                                    whileHover={{ x: 5 }}
                                 >
-                                    About Us
-                                </a>
-                            </li>
-                            <li>
-                                <a
-                                    href="/shop"
-                                    className="text-gray-600 hover:text-gray-900 transition-colors duration-200 text-sm"
-                                >
-                                    Shop
-                                </a>
-                            </li>
-                            <li>
-                                <a
-                                    href="/contact"
-                                    className="text-gray-600 hover:text-gray-900 transition-colors duration-200 text-sm"
-                                >
-                                    Contact
-                                </a>
-                            </li>
-                            <li>
-                                <a
-                                    href="/blog"
-                                    className="text-gray-600 hover:text-gray-900 transition-colors duration-200 text-sm"
-                                >
-                                    Blog
-                                </a>
-                            </li>
-                            <li>
-                                <a
-                                    href="/faq"
-                                    className="text-gray-600 hover:text-gray-900 transition-colors duration-200 text-sm"
-                                >
-                                    FAQ
-                                </a>
-                            </li>
+                                    <a
+                                        href={link.href}
+                                        className="text-gray-400 hover:text-white transition-colors duration-200 text-sm flex items-center gap-2"
+                                    >
+                                        <HiArrowRight className="w-3 h-3 opacity-0 group-hover:opacity-100" />
+                                        {link.name}
+                                    </a>
+                                </motion.li>
+                            ))}
                         </ul>
                     </div>
 
-                    {/* Categories */}
                     <div>
-                        <h4 className="text-lg font-semibold text-gray-900 mb-6">
-                            Categories
-                        </h4>
+                        <h4 className="text-lg font-semibold mb-6">Categories</h4>
                         <ul className="space-y-3">
                             {categoriesList && categoriesList.length > 0 ? (
-                                categoriesList.map((cat) => (
-                                    <li key={cat._id}>
+                                categoriesList.slice(0, 5).map((cat) => (
+                                    <motion.li
+                                        key={cat._id}
+                                        whileHover={{ x: 5 }}
+                                    >
                                         <a
                                             href={`/shop?category=${cat.slug}`}
-                                            className="text-gray-600 hover:text-gray-900 transition-colors duration-200 text-sm capitalize"
+                                            className="text-gray-400 hover:text-white transition-colors duration-200 text-sm capitalize flex items-center gap-2"
                                         >
+                                            <HiArrowRight className="w-3 h-3 opacity-0" />
                                             {cat.name}
                                         </a>
-                                    </li>
+                                    </motion.li>
                                 ))
                             ) : (
-                                <li className="text-gray-400 text-sm">No categories</li>
+                                footerLinks.categories.map((link, index) => (
+                                    <motion.li
+                                        key={index}
+                                        whileHover={{ x: 5 }}
+                                    >
+                                        <a
+                                            href={link.href}
+                                            className="text-gray-400 hover:text-white transition-colors duration-200 text-sm flex items-center gap-2"
+                                        >
+                                            <HiArrowRight className="w-3 h-3 opacity-0" />
+                                            {link.name}
+                                        </a>
+                                    </motion.li>
+                                ))
                             )}
                         </ul>
                     </div>
 
-                    {/* Newsletter */}
                     <div>
-                        <h4 className="text-lg font-semibold text-gray-900 mb-6">
-                            Stay Updated
-                        </h4>
-                        <p className="text-gray-600 mb-4 text-sm leading-relaxed">
-                            Subscribe to get updates on new products and exclusive offers.
+                        <h4 className="text-lg font-semibold mb-6">Stay Updated</h4>
+                        <p className="text-gray-400 mb-4 text-sm leading-relaxed">
+                            Subscribe to get exclusive deals and updates.
                         </p>
 
                         {subscription ? (
                             <motion.div
                                 initial={{ opacity: 0, y: 10 }}
                                 animate={{ opacity: 1, y: 0 }}
-                                className="p-4 bg-green-50 border border-green-200 rounded-lg"
+                                className="p-4 bg-green-500/10 border border-green-500/20 rounded-xl"
                             >
-                                <p className="text-green-700 text-sm font-medium">
+                                <p className="text-green-400 text-sm font-medium">
                                     ✓ Successfully subscribed!
                                 </p>
                             </motion.div>
@@ -145,54 +160,50 @@ const Footer = () => {
                                     <input
                                         onChange={(e) => setEmailInfo(e.target.value)}
                                         value={emailInfo}
-                                        className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-all duration-200 text-sm"
+                                        className="w-full px-5 py-3.5 bg-white/5 border border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-white/20 focus:border-white/30 transition-all duration-200 text-sm text-white placeholder-gray-500"
                                         type="email"
                                         placeholder="Enter your email"
                                     />
                                     {errMsg && (
-                                        <p className="text-red-500 text-xs mt-2 animate-pulse">
+                                        <p className="text-red-400 text-xs mt-2">
                                             {errMsg}
                                         </p>
                                     )}
                                 </div>
                                 <Button
                                     onClick={handleSubscription}
-                                    className="w-full bg-gray-900 hover:bg-gray-800 text-white py-3 rounded-lg transition-colors duration-200"
+                                    className="w-full bg-white text-gray-900 hover:bg-gray-100 py-3.5 rounded-xl font-semibold transition-colors duration-200"
                                 >
-                                    Subscribe
+                                    Subscribe Now
                                 </Button>
                             </div>
                         )}
                     </div>
-                </div>
+                </motion.div>
 
-                {/* Divider */}
-                <div className="border-t border-gray-100 pt-8">
+                <div className="border-t border-white/10 pt-8">
                     <div className="flex flex-col md:flex-row justify-between items-center gap-6">
-                        {/* Copyright */}
-                        <p className="text-gray-500 text-sm">
-                            © 2025 ECommerce. All rights reserved.
+                        <p className="text-gray-400 text-sm">
+                            © 2026 ECommerce. All rights reserved.
                         </p>
 
-                        {/* Payment Methods */}
                         <div className="flex items-center gap-4">
                             <span className="text-gray-500 text-sm">We accept:</span>
                             <img
                                 src={paymentCard}
                                 alt="Payment methods"
-                                className="h-8 object-contain opacity-60"
+                                className="h-8 object-contain opacity-70 grayscale hover:grayscale-0 transition-all duration-300"
                             />
                         </div>
 
-                        {/* Legal Links */}
                         <div className="flex gap-6">
-                            {["Privacy Policy", "Terms of Service"].map((link) => (
+                            {footerLinks.legal.map((link, index) => (
                                 <a
-                                    key={link}
-                                    href="#"
-                                    className="text-gray-500 hover:text-gray-900 text-sm transition-colors duration-200"
+                                    key={index}
+                                    href={link.href}
+                                    className="text-gray-500 hover:text-white text-sm transition-colors duration-200"
                                 >
-                                    {link}
+                                    {link.name}
                                 </a>
                             ))}
                         </div>

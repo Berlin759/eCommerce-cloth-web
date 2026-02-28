@@ -1,12 +1,14 @@
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import PropTypes from "prop-types";
+import { motion } from "framer-motion";
 import AddToCartButton from "./AddToCartButton";
 import PriceContainer from "./PriceContainer";
 
 const ProductCard = ({ item, viewMode = "grid", className = "" }) => {
     const navigate = useNavigate();
     const [isHovered, setIsHovered] = useState(false);
+    const [imageLoaded, setImageLoaded] = useState(false);
 
     const handleProductDetails = () => {
         navigate(`/product/${item?._id}`, {
@@ -14,6 +16,26 @@ const ProductCard = ({ item, viewMode = "grid", className = "" }) => {
                 item: item,
             },
         });
+    };
+
+    const containerVariants = {
+        hidden: { opacity: 0 },
+        visible: {
+            opacity: 1,
+            transition: {
+                staggerChildren: 0.05,
+            },
+        },
+    };
+
+    const itemVariants = {
+        hidden: { opacity: 0, y: 20 },
+        visible: {
+            opacity: 1,
+            y: 0,
+            transition: { type: "spring", stiffness: 100, damping: 12 },
+        },
+        exit: { opacity: 0, y: -20 },
     };
 
     if (viewMode === "list") {
@@ -106,84 +128,104 @@ const ProductCard = ({ item, viewMode = "grid", className = "" }) => {
 
     // Grid view (default)
     return (
-        <div
-            className={`w-full relative group bg-white border border-gray-100 hover:border-gray-200 hover:shadow-lg transition-all duration-300 ease-out ${className}`}
+        <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            className={`w-full relative group bg-white border border-gray-100 hover:border-gray-200 hover:shadow-xl transition-all duration-300 ease-out ${className}`}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
         >
-            {/* Image Container */}
-            <div className="relative overflow-hidden bg-gray-50">
+            <motion.div variants={itemVariants} className="relative overflow-hidden bg-gray-50">
                 <div
                     onClick={handleProductDetails}
                     className="w-full aspect-[4/5] overflow-hidden cursor-pointer bg-white"
                 >
-                    <img
-                        className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+                    <motion.img
+                        initial={{ scale: 1.1, opacity: 0 }}
+                        animate={{ scale: isHovered ? 1.1 : 1, opacity: 1 }}
+                        transition={{ duration: 0.5, ease: "easeOut" }}
+                        className="w-full h-full object-cover"
                         src={item?.images?.[0] || item?.image}
                         alt={item?.name}
+                        onLoad={() => setImageLoaded(true)}
                     />
                 </div>
 
-                {/* Sale Badge */}
-                {item?.offer && (
-                    <div className="absolute top-3 left-3">
-                        {item?.discountedPercentage > 0 ? (
-                            <span className="bg-black text-white text-xs font-medium px-2 py-1 uppercase tracking-wide">
-                                -{item.discountedPercentage}%
-                            </span>
-                        ) : (
-                            <span className="bg-red-600 text-white text-xs font-medium px-2 py-1 uppercase tracking-wide">
-                                Sale
-                            </span>
-                        )}
-                    </div>
-                )}
+                <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: isHovered ? 1 : 0, y: isHovered ? 0 : -10 }}
+                    transition={{ duration: 0.3 }}
+                    className="absolute top-3 left-3"
+                >
+                    {item?.offer && (
+                        <span className="bg-black text-white text-xs font-medium px-3 py-1.5 uppercase tracking-wide">
+                            {item?.discountedPercentage > 0 ? `-${item.discountedPercentage}%` : "Sale"}
+                        </span>
+                    )}
+                </motion.div>
 
-                {/* Badge for new items */}
-                {item?.badge && (
-                    <div className="absolute top-3 right-3">
-                        <span className="bg-green-600 text-white text-xs font-medium px-2 py-1 uppercase tracking-wide">
+                <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: isHovered ? 1 : 0, y: isHovered ? 0 : -10 }}
+                    transition={{ duration: 0.3, delay: 0.1 }}
+                    className="absolute top-3 right-3"
+                >
+                    {item?.badge && (
+                        <span className="bg-green-600 text-white text-xs font-medium px-3 py-1.5 uppercase tracking-wide">
                             New
                         </span>
-                    </div>
-                )}
+                    )}
+                </motion.div>
 
-                {/* Hover Overlay */}
-                <div
-                    className={`absolute inset-0 bg-black bg-opacity-20 transition-opacity duration-300 ${isHovered ? "opacity-100" : "opacity-0"
-                        }`}
+                <motion.div
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: isHovered ? 1 : 0, scale: isHovered ? 1 : 0.8 }}
+                    transition={{ duration: 0.3, delay: 0.1 }}
+                    className="absolute inset-x-0 bottom-0 p-4 bg-gradient-to-t from-black/60 to-transparent"
                 >
-                    <div className="absolute inset-0 flex items-center justify-center">
-                        <button
-                            onClick={handleProductDetails}
-                            className="bg-white text-black px-6 py-2 text-sm font-medium uppercase tracking-wide hover:bg-gray-100 transition-colors duration-200"
-                        >
-                            Quick Look
-                        </button>
-                    </div>
-                </div>
-            </div>
+                    <button
+                        onClick={handleProductDetails}
+                        className="w-full py-3 bg-white text-black font-semibold uppercase text-sm tracking-wide hover:bg-gray-100 transition-colors duration-200 rounded-lg"
+                    >
+                        Quick View
+                    </button>
+                </motion.div>
+            </motion.div>
 
-            {/* Product Info */}
-            <div className="pt-4 pb-4 px-4 text-center">
-                <h3
-                    className="text-sm font-medium text-gray-900 uppercase tracking-wide mb-2 cursor-pointer hover:text-gray-600 transition-colors duration-200"
+            <motion.div variants={itemVariants} className="pt-4 pb-4 px-4 text-center">
+                <motion.h3
+                    whileHover={{ scale: 1.02 }}
+                    className="text-sm font-semibold text-gray-900 uppercase tracking-wide mb-2 cursor-pointer hover:text-gray-600 transition-colors duration-200"
                     onClick={handleProductDetails}
                 >
                     {item?.name}
-                </h3>
+                </motion.h3>
 
-                {/* Price */}
                 <div className="mb-3">
                     <PriceContainer item={item} />
                 </div>
 
-                {/* Add to Cart Button */}
-                <div className="opacity-100 group-hover:opacity-100 transition-opacity duration-300">
+                <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: isHovered ? 1 : 0, height: isHovered ? "auto" : 0 }}
+                    transition={{ duration: 0.3 }}
+                >
                     <AddToCartButton item={item} />
-                </div>
-            </div>
-        </div>
+                </motion.div>
+
+                {!isHovered && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 0.2 }}
+                    >
+                        <AddToCartButton item={item} />
+                    </motion.div>
+                )}
+            </motion.div>
+        </motion.div>
     );
 };
 

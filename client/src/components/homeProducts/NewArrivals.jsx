@@ -1,11 +1,30 @@
 import { useEffect, useState } from "react";
 import Slider from "react-slick";
+import { motion } from "framer-motion";
 import NextArrow from "../NextArrow";
 import PreviousArrow from "../PreviousArrow";
-import Title from "../ui/title";
 import ProductCard from "../ProductCard";
 import { getData } from "../../helpers";
 import { config } from "../../../config";
+import { HiArrowRight, HiStar } from "react-icons/hi";
+import { Link } from "react-router-dom";
+
+const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+        opacity: 1,
+        transition: { staggerChildren: 0.08 },
+    },
+};
+
+const itemVariants = {
+    hidden: { opacity: 0, y: 30 },
+    visible: {
+        opacity: 1,
+        y: 0,
+        transition: { type: "spring", stiffness: 100, damping: 12 },
+    },
+};
 
 const NewArrivals = () => {
     const settings = {
@@ -68,9 +87,6 @@ const NewArrivals = () => {
     if (loading) {
         return (
             <div className="w-full py-10">
-                <div className="flex items-center justify-between">
-                    <Title className="text-2xl mb-3 font-bold">New Arrivals</Title>
-                </div>
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                     {Array.from({ length: 4 }).map((_, index) => (
                         <div
@@ -91,38 +107,24 @@ const NewArrivals = () => {
     }
 
     return (
-        <div className="w-full py-10">
-            <div className="flex items-center justify-between">
-                <Title className="text-2xl mb-3 font-bold">New Arrivals</Title>
-                {/* <Link to={"/shop"}>See all</Link> */}
-            </div>
-
-            {/* Conditionally render slider or grid based on product count */}
-            {products && products.length > 3 ? (
-                // Use slider when more than 3 products
-                <Slider {...settings}>
-                    {products?.map((item) => (
-                        <div key={item?._id} className="px-2">
-                            <ProductCard item={item} />
-                        </div>
-                    ))}
-                </Slider>
-            ) : (
-                // Use simple grid when 3 or fewer products
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    {products?.map((item) => (
-                        <ProductCard item={item} key={item?._id} />
-                    ))}
-                </div>
-            )}
-
-            {/* Show message when no products */}
+        <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
+        >
+            {products?.map((item) => (
+                <motion.div key={item?._id} variants={itemVariants}>
+                    <ProductCard item={item} />
+                </motion.div>
+            ))}
             {(!products || products.length === 0) && (
-                <div className="text-center py-8 text-gray-500">
-                    <p>No new arrivals available at the moment.</p>
+                <div className="col-span-full text-center py-12">
+                    <p className="text-gray-500">No new arrivals available</p>
                 </div>
             )}
-        </div>
+        </motion.div>
     );
 };
 

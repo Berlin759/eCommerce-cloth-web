@@ -27,13 +27,13 @@ const services = [
     },
     {
         title: "Easy Returns",
-        subtitle: "30-day return guarantee",
+        subtitle: "7-day return guarantee",
         icon: <HiOutlineCurrencyDollar />,
         details: {
             description:
                 "Not satisfied with your purchase? No problem! Our hassle-free return policy allows you to return any item within 30 days of purchase.",
             features: [
-                "30-day return window",
+                "7-day return window",
                 "Full refund guarantee",
                 "Free return shipping",
                 "Easy online return process",

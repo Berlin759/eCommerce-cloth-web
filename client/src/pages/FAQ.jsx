@@ -30,7 +30,7 @@ const FAQ = () => {
                 {
                     question: "What is your return policy?",
                     answer:
-                        "We offer a 30-day return policy for unused items in original packaging. Items must be returned within 30 days of delivery. Refunds will be processed within 5-7 business days after we receive your return.",
+                        "We offer a 7-day return policy for unused items in original packaging. Items must be returned within 30 days of delivery. Refunds will be processed within 5-7 business days after we receive your return.",
                 },
                 {
                     question: "Do you ship internationally?",

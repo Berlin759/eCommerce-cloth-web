@@ -54,6 +54,8 @@ connectCloudinary();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+app.use("/images", express.static(path.resolve(__dirname, "./public/images")));
+
 const routesPath = path.resolve(__dirname, "./routes");
 const routeFiles = readdirSync(routesPath);
 routeFiles.map(async (file) => {

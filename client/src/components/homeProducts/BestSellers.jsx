@@ -1,11 +1,57 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import Slider from "react-slick";
+import { motion } from "framer-motion";
+import { HiArrowRight, HiChevronLeft, HiChevronRight } from "react-icons/hi";
 import NextArrow from "../NextArrow";
 import PreviousArrow from "../PreviousArrow";
-import Title from "../ui/title";
 import ProductCard from "../ProductCard";
 import { getData } from "../../helpers";
 import { config } from "../../../config";
+import Container from "../Container";
+import PriceContainer from "../PriceContainer";
+
+const productBackground = [
+    "bg-[#fdf6eb]",
+    "bg-[#fce8ec]",
+    "bg-[#e8f5ec]",
+    "bg-[#fdf0e8]",
+];
+
+const fadeInUp = {
+    initial: { opacity: 0, y: 40 },
+    animate: {
+        opacity: 1,
+        y: 0,
+        transition: { duration: 0.6, ease: "easeOut" }
+    }
+};
+
+const staggerContainer = {
+    animate: {
+        transition: {
+            staggerChildren: 0.1,
+            delayChildren: 0.1
+        }
+    }
+};
+
+const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+        opacity: 1,
+        transition: { staggerChildren: 0.08 },
+    },
+};
+
+const itemVariants = {
+    hidden: { opacity: 0, y: 30 },
+    visible: {
+        opacity: 1,
+        y: 0,
+        transition: { type: "spring", stiffness: 100, damping: 12 },
+    },
+};
 
 const BestSellers = () => {
     const settings = {
@@ -68,9 +114,6 @@ const BestSellers = () => {
     if (loading) {
         return (
             <div className="w-full py-10">
-                <div className="flex items-center justify-between">
-                    <Title className="text-2xl mb-3 font-bold">Our Bestsellers</Title>
-                </div>
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                     {Array.from({ length: 4 }).map((_, index) => (
                         <div
@@ -91,38 +134,88 @@ const BestSellers = () => {
     }
 
     return (
-        <div className="w-full py-10">
-            <div className="flex items-center justify-between">
-                <Title className="text-2xl mb-3 font-bold">Our Bestsellers</Title>
-                {/* <Link to={"/shop"}>See all</Link> */}
-            </div>
+        // <motion.div
+        //     variants={containerVariants}
+        //     initial="hidden"
+        //     whileInView="visible"
+        //     viewport={{ once: true }}
+        //     className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
+        // >
+        //     {products?.map((item) => (
+        //         <motion.div key={item?._id} variants={itemVariants}>
+        //             <ProductCard item={item} />
+        //         </motion.div>
+        //     ))}
+        //     {(!products || products.length === 0) && (
+        //         <div className="col-span-full text-center py-12">
+        //             <p className="text-gray-500">No bestsellers available</p>
+        //         </div>
+        //     )}
+        // </motion.div>
 
-            {/* Conditionally render slider or grid based on product count */}
-            {products && products.length > 3 ? (
-                // Use slider when more than 3 products
-                <Slider {...settings}>
-                    {products?.map((item) => (
-                        <div key={item?._id} className="px-2">
-                            <ProductCard item={item} />
+        <section className="py-20 bg-white">
+            <Container>
+                <motion.div
+                    variants={fadeInUp}
+                    initial="initial"
+                    whileInView="animate"
+                    viewport={{ once: true }}
+                    className="text-center mb-16"
+                >
+                    <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#171717] mb-4">
+                        {/* Shop our<br />top shelf */}
+                        Shop our top shelf
+                    </h2>
+                    <p className="text-gray-600 text-xl mb-8">
+                        Our most popular products loved by customers
+                    </p>
+                    <Link
+                        to="/shop"
+                        className="inline-flex items-center gap-2 px-8 py-4 bg-[#171717] text-white font-semibold hover:bg-[#936e29] transition-colors duration-300"
+                    >
+                        Shop All <HiArrowRight className="w-5 h-5" />
+                    </Link>
+                </motion.div>
+
+                <motion.div
+                    variants={staggerContainer}
+                    initial="initial"
+                    whileInView="animate"
+                    viewport={{ once: true }}
+                    className="grid md:grid-cols-2 lg:grid-cols-4 gap-8"
+                >
+                    {products.map((product, index) => (
+                        <motion.div key={product._id} variants={fadeInUp}>
+                            <Link to={`/shop?category=${product?.category}`} className="block group">
+                                <div className={`${productBackground[index]} rounded-none p-8 mb-4 aspect-square flex items-center justify-center transition-transform duration-300 group-hover:scale-[1.02]`}>
+                                    <img
+                                        src={product?.images?.[0] || product?.image}
+                                        alt={product?.name}
+                                        className="w-full h-full object-cover"
+                                        onError={(e) => {
+                                            e.target.src = "https://via.placeholder.com/400x400?text=Product";
+                                        }}
+                                    />
+                                </div>
+                                <h4 className="font-bold text-[#171717] text-lg">{product?.name}</h4>
+                                <div className="mt-5 mb-3">
+                                    <PriceContainer item={product} className={`text-xl font-semibold `} />
+                                </div>
+                                <span className="inline-flex items-center gap-1 text-[#936e29] font-semibold text-sm">
+                                    SHOP NOW <HiArrowRight className="w-3 h-3" />
+                                </span>
+                            </Link>
+                        </motion.div>
+                    ))}
+
+                    {(!products || products.length === 0) && (
+                        <div className="col-span-full text-center py-12">
+                            <p className="text-gray-600 text-xl mb-8">No top selling brand available</p>
                         </div>
-                    ))}
-                </Slider>
-            ) : (
-                // Use simple grid when 3 or fewer products
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    {products?.map((item) => (
-                        <ProductCard item={item} key={item?._id} />
-                    ))}
-                </div>
-            )}
-
-            {/* Show message when no products */}
-            {(!products || products.length === 0) && (
-                <div className="text-center py-8 text-gray-500">
-                    <p>No bestsellers available at the moment.</p>
-                </div>
-            )}
-        </div>
+                    )}
+                </motion.div>
+            </Container>
+        </section>
     );
 };
 
