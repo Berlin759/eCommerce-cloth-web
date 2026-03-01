@@ -85,10 +85,10 @@ const Header = () => {
         >
             <div className={`border-b transition-all duration-300 ${scrolled ? "border-transparent" : "border-gray-200"}`}>
                 <Container className="py-2 lg:py-2 flex items-center gap-x-3 md:gap-x-5 justify-between">
-                    <Link to={"/"} className="flex-shrink-0">
+                    <Link to={"/"} className="flex-shrink-0 web-lab">
                         <motion.img
                             whileHover={{ scale: 1.05 }}
-                            src={logo} alt="logo" className="h-5 w-auto" />
+                            src={logo} alt="logo" className="w-auto" />
                     </Link>
 
                     <div className="hidden md:block flex-1 max-w-xl mx-4">

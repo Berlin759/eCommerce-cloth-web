@@ -21,3 +21,9 @@
 .mt-35 {
     margin-top: 35px;
 }
+
+.web-lab img {
+    height: 60px;
+    margin-left: 5px;
+    margin-top: 5px;
+}

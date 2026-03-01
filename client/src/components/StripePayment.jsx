@@ -146,7 +146,7 @@ const CheckoutForm = ({ orderId, amount, onSuccess, onCancel }) => {
                             </div>
                         </div>
 
-                        {/* Card Brand Logo Area */}
+                        {/* Card Brand Area */}
                         <div className="absolute top-4 right-4">
                             <div className="w-12 h-8 bg-white/20 rounded-md flex items-center justify-center">
                                 <FaCreditCard className="w-6 h-6 text-white/80" />

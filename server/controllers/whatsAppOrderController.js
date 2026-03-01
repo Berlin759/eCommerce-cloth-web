@@ -155,7 +155,7 @@ export const generateInvoicePDF = async (order) => {
         doc.pipe(fs.createWriteStream(filePath));
 
         /* ---------------- HEADER ---------------- */
-        const logoPath = path.join("public/images/orebiLogo.png");
+        const logoPath = path.join("public/images/thumbnail.png");
         if (fs.existsSync(logoPath)) {
             doc.image(logoPath, 40, 40, { width: 70 });
         }

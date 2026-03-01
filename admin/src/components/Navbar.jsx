@@ -57,7 +57,6 @@ const Navbar = () => {
     return (
         <header className="border-b border-gray-200 w-full sticky top-0 left-0 z-40 bg-white shadow-sm">
             <div className="py-2.5 flex items-center justify-between px-4">
-                {/* Logo Section */}
                 <Link to={"/"} className="flex items-center gap-3 group">
                     <img
                         src={logo}

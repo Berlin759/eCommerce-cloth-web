@@ -74,10 +74,9 @@ const LoginPage = () => {
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center p-4">
             <div className="w-full max-w-md">
-                {/* Logo Section */}
                 <div className="text-center mb-6">
                     <div className="bg-white p-3 rounded-md shadow-lg inline-block mb-4 transform hover:scale-105 transition-transform duration-300">
-                        <img src={logo} alt="logo" className="w-20" />
+                        <img src={logo} alt="logo" className="web-lab-img" style={{ width: `125px` }} />
                     </div>
                     <h1 className="text-3xl font-bold text-gray-800 mb-2">
                         Welcome Back
@@ -223,7 +222,7 @@ const LoginPage = () => {
                     </form>
 
                     {/* Register Link */}
-                    <div className="mt-6 text-center">
+                    {/* <div className="mt-6 text-center">
                         <p className="text-sm text-gray-600">
                             Don&apos;t have an account?{" "}
                             <Link
@@ -233,7 +232,7 @@ const LoginPage = () => {
                                 Create Account
                             </Link>
                         </p>
-                    </div>
+                    </div> */}
 
                     {/* Additional Elements */}
                     <div className="mt-4 text-center">
