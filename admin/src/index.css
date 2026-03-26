@@ -11,3 +11,9 @@
     top: 24px;
     bottom: 0px;
 };
+
+.web-lab img {
+    height: 60px;
+    margin-left: 5px;
+    margin-top: 5px;
+}
