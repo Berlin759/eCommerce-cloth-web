@@ -162,7 +162,7 @@ const ProVitaminBanner = () => {
                             Luxury is beautiful
                         </h2>
                         <p className="text-gray-600 text-lg mb-8 max-w-lg">
-                            Our experts have spent years perfecting our fabrics and fits, creating garments that provide all-day comfort, lasting durability, and confidence from within.
+                            Experience the luxury of naturally nourished hair. Crafted with powerful botanical ingredients to cleanse, hydrate, and restore brilliance from root to tip.
                         </p>
                         {/* <Link
                             to="/about"
