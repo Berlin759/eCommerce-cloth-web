@@ -3,7 +3,8 @@ import logoLight from "./logoLight.png";
 import bannerImgOne from "./banner/slideOne.png";
 import bannerImgTwo from "./banner/slideTwo.png";
 import bannerImgThree from "./banner/slideThree.png";
-import luxuryBannerImg from "./banner/luxury_banner.png";
+// import luxuryBannerImg from "./banner/luxury_banner.png";
+import luxuryBannerImg from "./banner/luxury_banner_new.jpeg";
 // ============== Products Start here ====================
 
 // Year Product

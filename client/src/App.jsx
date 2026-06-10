@@ -185,7 +185,7 @@ const ProVitaminBanner = () => {
                                 src={luxuryBannerImg}
                                 // src="https://images.ctfassets.net/r9udlqyetmm3/5JoNeOaqBem4a0wRbUlQVz/680b553e3788426eb947e5613ba4bda3/slider-product-1.png"
                                 alt="Pro-V Formula"
-                                className="w-4/5 h-4/5 object-contain"
+                                className="img-width object-contain"
                                 onError={(e) => {
                                     e.target.src = "https://via.placeholder.com/500x500?text=Pro-V";
                                 }}
